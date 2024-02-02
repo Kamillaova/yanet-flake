@@ -1,0 +1,37 @@
+diff -Naru a/dataplane/neighbor.cpp b/dataplane/neighbor.cpp
+--- a/dataplane/neighbor.cpp	2024-02-02 09:03:36.237026318 +0300
++++ b/dataplane/neighbor.cpp	2024-02-02 10:20:58.165428677 +0300
+@@ -37,7 +37,7 @@
+ 	char buffer[IFNAMSIZ];
+ 	if (if_indextoname(iface_id, buffer) == nullptr)
+ 	{
+-		snprintf(buffer, IFNAMSIZ, "unknown_%u", iface_id);
++		snprintf(buffer, IFNAMSIZ, "unk_%u", iface_id);
+ 	}
+ 	return buffer;
+ }
+diff -Naru a/dataplane/sock_dev.cpp b/dataplane/sock_dev.cpp
+--- a/dataplane/sock_dev.cpp	2024-02-02 09:03:36.237026318 +0300
++++ b/dataplane/sock_dev.cpp	2024-02-02 10:29:26.726450258 +0300
+@@ -446,7 +446,9 @@
+ 	unlink(path);
+ 	internals->fd = socket(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	internals->sockaddr.sun_family = AF_UNIX;
++#pragma GCC diagnostic ignored "-Wstringop-truncation"
+ 	strncpy(internals->sockaddr.sun_path, path, sizeof(internals->sockaddr.sun_path));
++#pragma GCC diagnostic pop
+ 	bind(internals->fd, (struct sockaddr*)&internals->sockaddr, sizeof(internals->sockaddr));
+ 	listen(internals->fd, 1);
+ 	internals->conFd = -1;
+diff -Naru a/logger/main.cpp b/logger/main.cpp
+--- a/logger/main.cpp	2024-02-02 09:03:36.247026219 +0300
++++ b/logger/main.cpp	2024-02-02 10:20:48.532137103 +0300
+@@ -145,7 +145,7 @@
+ 				}
+ 
+ 				auto direction = true;
+-				auto iface = std::string("unknown_") + std::to_string(sample->acl_id);
++				auto iface = std::string("unk_") + std::to_string(sample->acl_id);
+ 				auto rule_ids = std::string();
+ 
+ 				if (aclConfig != nullptr)

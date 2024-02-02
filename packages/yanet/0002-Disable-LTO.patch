@@ -1,0 +1,39 @@
+diff -Naru a/controlplane/unittest/meson.build b/controlplane/unittest/meson.build
+--- a/controlplane/unittest/meson.build	2024-02-02 09:03:36.237026318 +0300
++++ b/controlplane/unittest/meson.build	2024-02-02 10:10:57.357732062 +0300
+@@ -31,8 +31,7 @@
+                       [controlplane_sources, sources],
+                       include_directories: yanet_rootdir,
+                       dependencies: dependencies,
+-                      cpp_args: cpp_args_append,
+-                      override_options: 'b_lto=false')
++                      cpp_args: cpp_args_append)
+ 
+ test('controlplane',
+      unittest,
+diff -Naru a/dataplane/unittest/meson.build b/dataplane/unittest/meson.build
+--- a/dataplane/unittest/meson.build	2024-02-02 09:06:16.358836470 +0300
++++ b/dataplane/unittest/meson.build	2024-02-02 10:10:46.137766474 +0300
+@@ -17,8 +17,7 @@
+                       sources,
+                       include_directories: yanet_rootdir,
+                       dependencies: dependencies,
+-                      cpp_args: cpp_args_append,
+-                      override_options: 'b_lto=false')
++                      cpp_args: cpp_args_append)
+ 
+ test('dataplane',
+      unittest,
+diff -Naru a/meson.build b/meson.build
+--- a/meson.build	2024-02-02 09:03:36.247026219 +0300
++++ b/meson.build	2024-02-02 10:10:38.411123242 +0300
+@@ -3,8 +3,7 @@
+         default_options: ['cpp_std=c++17',
+                           'buildtype=release',
+                           'warning_level=2',
+-                          'werror=true',
+-                          'b_lto=true'])
++                          'werror=true'])
+ 
+ 
+ yanet_rootdir = include_directories('.')

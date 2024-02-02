@@ -1,0 +1,52 @@
+diff -Naru a/common/icp_proto.h b/common/icp_proto.h
+--- a/common/icp_proto.h	2024-02-02 09:03:36.233693019 +0300
++++ b/common/icp_proto.h	2024-02-02 09:23:26.850984687 +0300
+@@ -1,6 +1,8 @@
+ #pragma once
+ 
++#define final
+ #include "libprotobuf/controlplane.pb.h"
++#undef final
+ 
+ namespace common::icp_proto
+ {
+diff -Naru a/common/iproto_controlplane.h b/common/iproto_controlplane.h
+--- a/common/iproto_controlplane.h	2024-02-02 09:03:36.233693019 +0300
++++ b/common/iproto_controlplane.h	2024-02-02 09:20:18.145626738 +0300
+@@ -1,6 +1,8 @@
+ #pragma once
+ 
++#define final
+ #include "libprotobuf/controlplane.pb.h"
++#undef final
+ 
+ #include "icp_proto.h"
+ #include "rpc_channel.h"
+diff -Naru a/controlplane/balancer.h b/controlplane/balancer.h
+--- a/controlplane/balancer.h	2024-02-02 09:03:36.233693019 +0300
++++ b/controlplane/balancer.h	2024-02-02 09:23:12.207751937 +0300
+@@ -11,7 +11,10 @@
+ #include "common/icp.h"
+ #include "common/idataplane.h"
+ #include "common/refarray.h"
++
++#define final
+ #include "libprotobuf/controlplane.pb.h"
++#undef final
+ 
+ namespace balancer
+ {
+diff -Naru a/controlplane/controlplane.h b/controlplane/controlplane.h
+--- a/controlplane/controlplane.h	2024-02-02 09:03:36.233693019 +0300
++++ b/controlplane/controlplane.h	2024-02-02 09:23:00.987829108 +0300
+@@ -16,7 +16,10 @@
+ #include "common/idataplane.h"
+ #include "common/idp.h"
+ #include "common/result.h"
++
++#define final
+ #include "libprotobuf/controlplane.pb.h"
++#undef final
+ 
+ #include "balancer.h"
+ #include "base.h"

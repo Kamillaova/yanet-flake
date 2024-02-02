@@ -1,0 +1,13 @@
+diff -Naru a/common/stream.h b/common/stream.h
+--- a/common/stream.h	2024-02-02 09:03:36.233693019 +0300
++++ b/common/stream.h	2024-02-02 11:01:10.355059525 +0300
+@@ -446,7 +446,9 @@
+ 	{
+ 		TType value;
+ 		pop(value);
++#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+ 		optional = value;
++#pragma GCC diagnostic pop
+ 	}
+ }
+ 

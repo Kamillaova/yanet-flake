@@ -1,0 +1,11 @@
+diff -Naru a/dataplane/meson.build b/dataplane/meson.build
+--- a/dataplane/meson.build	2024-02-02 09:06:16.358836470 +0300
++++ b/dataplane/meson.build	2024-02-02 10:36:27.108113647 +0300
+@@ -2,6 +2,7 @@
+ dependencies += dependency('libdpdk')
+ dependencies += dependency('libsystemd')
+ dependencies += dependency('threads')
++dependencies += dependency('numa')
+ 
+ sources = files('bus.cpp',
+                 'controlplane.cpp',

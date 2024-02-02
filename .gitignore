@@ -1,0 +1,9 @@
+*
+!*/
+
+!.git*
+
+!/flake.lock
+
+!*.nix
+!*.patch
