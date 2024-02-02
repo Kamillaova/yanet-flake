@@ -1,4 +1,11 @@
 {
+	description = "Flake for YANET";
+
+	nixConfig = {
+		extra-substituters = "https://kamillaova.cachix.org";
+		extra-trusted-public-keys = "kamillaova.cachix.org-1:TRQAuNhP6TO2CCl2Jen94Cx4tGpaBtha8o97NRgbngY=";
+	};
+
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 		flake-parts.url = "github:hercules-ci/flake-parts";
