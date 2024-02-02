@@ -19,9 +19,12 @@
 , numactl
 
 # Options
+, versionType ? "stable"
+, yanetConfig ? "release"
 , systemdSupport ? true
 }: let
   version = "62.0";
+  commit = "da7e39895bab3422e52e6cb6ac91f0db4ed1ef9d";
 in stdenv.mkDerivation {
 	pname = "yanet";
 	inherit version;
@@ -29,7 +32,7 @@ in stdenv.mkDerivation {
 	src = fetchFromGitHub {
 		owner = "yanet-platform";
 		repo = "yanet";
-		rev = "v${version}";
+		rev = commit;
 		hash = "sha256-dPo71Z1VUmyD5+D7p11yRSiBTZRDKYyp1n1BnPKtTlg=";
 	};
 
@@ -43,6 +46,19 @@ in stdenv.mkDerivation {
 	] ++ lib.optional (!systemdSupport) ./0007-Disable-systemd-support.patch;
 
 	enableParallelBuilding = true;
+
+	mesonFlags = let
+		versionMatch = builtins.match "^([0-9]+)\.([0-9]+)$" version;
+		versionMajor = builtins.elemAt versionMatch 0;
+		versionMinor = builtins.elemAt versionMatch 1;
+	in [
+		"-Dyanet_config=${yanetConfig}"
+		"-Dversion_major=${versionMajor}"
+		"-Dversion_minor=${versionMinor}"
+		"-Dversion_revision=1"
+		"-Dversion_hash=${commit}"
+		"-Dversion_custom=${versionType}"
+	];
 
 	nativeBuildInputs = [ meson ninja pkg-config flex bison ];
 
