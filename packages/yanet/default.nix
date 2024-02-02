@@ -74,4 +74,11 @@ in stdenv.mkDerivation {
 	passthru = {
 		inherit dpdk protobuf;
 	};
+
+	meta = with lib; {
+		description = "A high performance framework for forwarding traffic based on DPDK";
+		homepage = "https://github.com/yanet-platform/yanet";
+		license = with licenses; [ asl20 ];
+		platforms =	platforms.linux;
+	};
 }
