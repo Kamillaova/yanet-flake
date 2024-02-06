@@ -1,0 +1,21 @@
+From d1cbc8438ef18634419104135cf2154c11ec746e Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Sun, 24 Dec 2023 22:12:28 +0300
+Subject: [PATCH] Include <cstdint> as `uint64_t` is used
+
+---
+ controlplane/acl/bitset.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/controlplane/acl/bitset.h b/controlplane/acl/bitset.h
+index 0b6ff6c..a0311c5 100644
+--- a/controlplane/acl/bitset.h
++++ b/controlplane/acl/bitset.h
+@@ -1,5 +1,6 @@
+ #pragma once
+ 
++#include <cstdint>
+ #include <string_view>
+ #include <tuple>
+ #include <vector>
+

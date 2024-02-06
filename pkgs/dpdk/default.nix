@@ -104,7 +104,11 @@ in stdenv.mkDerivation {
 		homepage = "https://dpdk.org";
 		license = with licenses; [ lgpl21 gpl2 bsd2 ];
 		platforms =	platforms.linux;
-		maintainers = with maintainers; [ magenbluten orivej mic92 zhaofengli ];
 		broken = mod && kernel.isHardened;
+		longDescription = ''
+			DPDK is a set of libraries and drivers that
+			accelerate packet processing and the ability to create
+			packet forwarders without the need for costly custom switches and routers.
+		'';
 	};
 }

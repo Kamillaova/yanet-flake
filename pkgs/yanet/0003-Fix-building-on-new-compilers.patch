@@ -1,0 +1,101 @@
+From 2308d021cbb9c1ccea85053a35152809a45fcb78 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Wed, 17 Jan 2024 14:15:32 +0300
+Subject: [PATCH] Remove `constexpr` for function not following the
+ requirements
+
+---
+ common/type.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/common/type.h b/common/type.h
+index b60331e..a8e7cb4 100644
+--- a/common/type.h
++++ b/common/type.h
+@@ -557,7 +557,7 @@ class ip_address_t
+ 	{
+ 	}
+ 
+-	constexpr ip_address_t(const uint8_t ip_version, const uint8_t* bytes)
++	ip_address_t(const uint8_t ip_version, const uint8_t* bytes)
+ 	{
+ 		if (ip_version == 4)
+ 		{
+@@ -1217,7 +1217,7 @@ class ip_prefix_t
+ 	{
+ 	}
+ 
+-	constexpr ip_prefix_t(const ip_address_t& address, const uint8_t& mask)
++	ip_prefix_t(const ip_address_t& address, const uint8_t& mask)
+ 	{
+ 		if (address.is_ipv4())
+ 		{
+
+From 251a58e0abe7b1359a5465b55f61dcf533c2c46a Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Sun, 24 Dec 2023 22:13:57 +0300
+Subject: [PATCH] Do not use std::move as it prevents from copy ellision
+
+---
+ common/generation.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/common/generation.h b/common/generation.h
+index be3381c..bd24ed7 100644
+--- a/common/generation.h
++++ b/common/generation.h
+@@ -109,7 +109,7 @@ class generation_manager
+ 
+ 	[[nodiscard]] std::shared_lock<std::shared_mutex> current_lock_guard() const
+ 	{
+-		return std::move(std::shared_lock(current_mutex));
++		return std::shared_lock(current_mutex);
+ 	}
+ 
+ 	const Type& current() const
+
+From 05a1969f7ef33beb3ab72e6f1361637f3edf91c9 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Sun, 24 Dec 2023 22:15:11 +0300
+Subject: [PATCH] Do not reference not existent object
+
+---
+ libfwparser/fw_config.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libfwparser/fw_config.cpp b/libfwparser/fw_config.cpp
+index cd6e730..b8568b0 100644
+--- a/libfwparser/fw_config.cpp
++++ b/libfwparser/fw_config.cpp
+@@ -19,7 +19,7 @@ using namespace ipfw;
+ fw_config_t::fw_config_t(int step)
+ {
+ 	// use limits like in FreeBSD kernel
+-	const auto& value = std::clamp(step, 1, 1000);
++	const auto value = std::clamp(step, 1, 1000);
+ 
+ 	m_debug = 0;
+ 	m_ruleid_last = 0;
+
+From d4871aa4e66ccf495467313e629151eed94fa017 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Wed, 17 Jan 2024 14:16:40 +0300
+Subject: [PATCH] Set value to zero in case of decoding error
+
+---
+ common/stream.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/common/stream.h b/common/stream.h
+index 7429127..8c36cbc 100644
+--- a/common/stream.h
++++ b/common/stream.h
+@@ -269,6 +269,7 @@ inline void stream_in_t::pop(TType& value)
+ 	{
+ 		if (inBuffer.size() - inPosition < sizeof(TType))
+ 		{
++			memset(&value, 0, sizeof(TType));
+ 			inPosition = this->inBuffer.size();
+ 			failed = true;
+ 			return;
+

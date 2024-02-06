@@ -20,18 +20,14 @@
 		
 			systems = import inputs.systems;
 
-			perSystem = { config, pkgs, ... }: let 
-				stdenv = pkgs.gcc11Stdenv; # YANET requires gcc 11 or older
-			in {
+			perSystem = { config, pkgs, ... }: {
 				overlayAttrs = {
 					inherit (config.packages) yanet;
 				};
 
 				packages = rec {
-					abseil-cpp = pkgs.callPackage ./pkgs/abseil-cpp { inherit stdenv; };
-					protobuf = pkgs.callPackage ./pkgs/protobuf { inherit stdenv abseil-cpp; };
 					dpdk = pkgs.callPackage ./pkgs/dpdk { kernel = null; };
-					yanet = pkgs.callPackage ./pkgs/yanet { inherit stdenv protobuf dpdk; };
+					yanet = pkgs.callPackage ./pkgs/yanet { inherit dpdk; };
 
 					default = yanet;
 				};

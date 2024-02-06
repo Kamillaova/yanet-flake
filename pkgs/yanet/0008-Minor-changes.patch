@@ -1,0 +1,68 @@
+From 7cc9e2784b7739c9bdc397c76d4db1432146a20d Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Sun, 24 Dec 2023 19:55:01 +0300
+Subject: [PATCH] Fix signed an unsigned integers comparison
+
+---
+ dataplane/worker.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dataplane/worker.cpp b/dataplane/worker.cpp
+index e8e9ee3..3242856 100644
+--- a/dataplane/worker.cpp
++++ b/dataplane/worker.cpp
+@@ -4028,7 +4028,7 @@ inline void cWorker::balancer_ipv6_source(rte_ipv6_hdr* header,
+ 		random_ptr++;
+ 	}
+ 
+-	uint8_t n_to_fill = RTE_MIN(sizeof(header->src_addr) - random_ptr, 4);
++	uint8_t n_to_fill = RTE_MIN(sizeof(header->src_addr) - random_ptr, (unsigned long)4);
+ 
+ 	/// Fill the first 4 (or less) bytes after the mask with random numbers.
+ 	rte_memcpy(&header->src_addr[random_ptr], &random_src, n_to_fill);
+
+From 8fd520fabe9376d12f7708a1f2520deec0b62881 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Wed, 17 Jan 2024 15:23:29 +0300
+Subject: [PATCH] Do not build logger as deprecated
+
+---
+ meson.build | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 5eda26e..8ff2e6b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -69,7 +69,6 @@ subdir('controlplane')
+ subdir('cli')
+ 
+ if get_option('target').contains('release')
+-    subdir('logger')
+     subdir('librib')
+ 
+     install_data('yanet-init.sh',
+
+From 46f9ec19bf65c0f7d9ce4371a37e87f2ee31f894 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Mon, 25 Dec 2023 18:31:14 +0300
+Subject: [PATCH] Do not build unused DPDK components
+
+---
+ dataplane/dataplane.cpp | 1 -
+ meson.build             | 2 ++
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/dataplane/dataplane.cpp b/dataplane/dataplane.cpp
+index fc8aa9a..348ab7a 100644
+--- a/dataplane/dataplane.cpp
++++ b/dataplane/dataplane.cpp
+@@ -11,7 +11,6 @@
+ #include <thread>
+ 
+ #include <rte_eal.h>
+-#include <rte_eth_ring.h>
+ #include <rte_launch.h>
+ #include <rte_lcore.h>
+ #include <rte_malloc.h>
+

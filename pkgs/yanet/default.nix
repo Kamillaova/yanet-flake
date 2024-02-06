@@ -39,11 +39,13 @@ in stdenv.mkDerivation {
 	patches = [
 		./0001-Disable-static-linking.patch
 		./0002-Disable-LTO.patch
-		./0003-Fix-string-bound-errors.patch
-		./0004-Workaround-protobuf-final.patch
-		./0005-Fix-stream-uninitialized-error.patch
-		./0006-Add-numa-dependency.patch
-	] ++ lib.optional (!systemdSupport) ./0007-Disable-systemd-support.patch;
+		./0003-Fix-building-on-new-compilers.patch
+		./0004-Fix-string-bound-errors.patch
+		./0005-Fix-protobuf-final.patch
+		./0006-Add-cstdint-include.patch
+		./0007-Add-numa-dependency.patch
+		./0008-Minor-changes.patch
+	] ++ lib.optional (!systemdSupport) ./0009-Disable-systemd-support.patch;
 
 	enableParallelBuilding = true;
 
@@ -63,22 +65,24 @@ in stdenv.mkDerivation {
 	nativeBuildInputs = [ meson ninja pkg-config flex bison ];
 
 	buildInputs = [
-		dpdk.dev
-		libnl.dev
+		dpdk
+		libnl
+		numactl
+		yaml-cpp
 		protobuf
 		nlohmann_json
-		numactl.dev
-		yaml-cpp
 	] ++ lib.optional systemdSupport systemdLibs;
 
-	passthru = {
-		inherit dpdk protobuf;
-	};
+	passthru = { inherit dpdk; };
 
 	meta = with lib; {
 		description = "A high performance framework for forwarding traffic based on DPDK";
 		homepage = "https://github.com/yanet-platform/yanet";
 		license = with licenses; [ asl20 ];
 		platforms =	platforms.linux;
+		longDescription = ''
+			YANET is an open-source extensible framework for
+			software forwarding traffic based on DPDK.
+		'';
 	};
 }

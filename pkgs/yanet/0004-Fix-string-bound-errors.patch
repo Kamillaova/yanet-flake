@@ -1,0 +1,66 @@
+From 352ad4ba477b95b16d3e1a18c2bede7df1f46556 Mon Sep 17 00:00:00 2001
+From: Georgy Kirichenko <kirichenkoga@gmail.com>
+Date: Sun, 24 Dec 2023 19:51:23 +0300
+Subject: [PATCH] Fix invalid strncpy destination buffer size
+
+`strncpy` function does not guaranty the zero-byte at the end of a destination
+buffer in case of source string truncation so the limit should be less
+that the destination size.
+---
+ autotest/autotest.cpp  | 2 +-
+ dataplane/sock_dev.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/autotest/autotest.cpp b/autotest/autotest.cpp
+index 1ca460b..63cd3e1 100644
+--- a/autotest/autotest.cpp
++++ b/autotest/autotest.cpp
+@@ -103,7 +103,7 @@ eResult tAutotest::initSockets()
+ 		}
+ 		struct sockaddr_un sockaddr;
+ 		sockaddr.sun_family = AF_UNIX;
+-		strncpy(sockaddr.sun_path, pci.data() + strlen(SOCK_DEV_PREFIX), sizeof(sockaddr.sun_path));
++		strncpy(sockaddr.sun_path, pci.data() + strlen(SOCK_DEV_PREFIX), sizeof(sockaddr.sun_path) - 1);
+ 		if (connect(fd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
+ 		{
+ 			YANET_LOG_ERROR("error: could not connect: %s\n", strerror(errno));
+diff --git a/dataplane/sock_dev.cpp b/dataplane/sock_dev.cpp
+index 3202def..810d247 100644
+--- a/dataplane/sock_dev.cpp
++++ b/dataplane/sock_dev.cpp
+@@ -446,7 +446,7 @@ int sock_dev_create(const char* name, uint8_t numa_node)
+ 	unlink(path);
+ 	internals->fd = socket(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK, 0);
+ 	internals->sockaddr.sun_family = AF_UNIX;
+-	strncpy(internals->sockaddr.sun_path, path, sizeof(internals->sockaddr.sun_path));
++	strncpy(internals->sockaddr.sun_path, path, sizeof(internals->sockaddr.sun_path) - 1);
+ 	bind(internals->fd, (struct sockaddr*)&internals->sockaddr, sizeof(internals->sockaddr));
+ 	listen(internals->fd, 1);
+ 	internals->conFd = -1;
+
+diff -Naru a/dataplane/neighbor.cpp b/dataplane/neighbor.cpp
+--- a/dataplane/neighbor.cpp	2024-02-02 09:03:36.237026318 +0300
++++ b/dataplane/neighbor.cpp	2024-02-02 10:20:58.165428677 +0300
+@@ -37,7 +37,7 @@
+ 	char buffer[IFNAMSIZ];
+ 	if (if_indextoname(iface_id, buffer) == nullptr)
+ 	{
+-		snprintf(buffer, IFNAMSIZ, "unknown_%u", iface_id);
++		snprintf(buffer, IFNAMSIZ, "unk_%u", iface_id);
+ 	}
+ 	return buffer;
+ }
+
+diff -Naru a/logger/main.cpp b/logger/main.cpp
+--- a/logger/main.cpp	2024-02-02 09:03:36.247026219 +0300
++++ b/logger/main.cpp	2024-02-02 10:20:48.532137103 +0300
+@@ -145,7 +145,7 @@
+ 				}
+ 
+ 				auto direction = true;
+-				auto iface = std::string("unknown_") + std::to_string(sample->acl_id);
++				auto iface = std::string("unk_") + std::to_string(sample->acl_id);
+ 				auto rule_ids = std::string();
+ 
+ 				if (aclConfig != nullptr)
+
