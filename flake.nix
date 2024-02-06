@@ -28,10 +28,10 @@
 				};
 
 				packages = rec {
-					abseil-cpp = pkgs.callPackage ./packages/abseil-cpp { inherit stdenv; };
-					protobuf = pkgs.callPackage ./packages/protobuf { inherit stdenv abseil-cpp; };
-					dpdk = pkgs.callPackage ./packages/dpdk { kernel = null; };
-					yanet = pkgs.callPackage ./packages/yanet { inherit stdenv protobuf dpdk; };
+					abseil-cpp = pkgs.callPackage ./pkgs/abseil-cpp { inherit stdenv; };
+					protobuf = pkgs.callPackage ./pkgs/protobuf { inherit stdenv abseil-cpp; };
+					dpdk = pkgs.callPackage ./pkgs/dpdk { kernel = null; };
+					yanet = pkgs.callPackage ./pkgs/yanet { inherit stdenv protobuf dpdk; };
 
 					default = yanet;
 				};
