@@ -23,8 +23,8 @@
 , yanetConfig ? "release"
 , systemdSupport ? true
 }: let
-  version = "62.0";
-  commit = "da7e39895bab3422e52e6cb6ac91f0db4ed1ef9d";
+  version = "63.0";
+  commit = "535ec75b895faa76eceb6711e21795bd4fef4932";
 in stdenv.mkDerivation {
 	pname = "yanet";
 	inherit version;
@@ -33,7 +33,7 @@ in stdenv.mkDerivation {
 		owner = "yanet-platform";
 		repo = "yanet";
 		rev = commit;
-		hash = "sha256-dPo71Z1VUmyD5+D7p11yRSiBTZRDKYyp1n1BnPKtTlg=";
+		hash = "sha256-+sZ18cBBlUv4igeN0tefv6ySLe1t8j+RODjnmyk5hck=";
 	};
 
 	patches = [
