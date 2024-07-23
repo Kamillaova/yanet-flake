@@ -80,7 +80,7 @@ in stdenv.mkDerivation {
 		description = "A high performance framework for forwarding traffic based on DPDK";
 		homepage = "https://github.com/yanet-platform/yanet";
 		license = with licenses; [ asl20 ];
-		platforms =	platforms.linux;
+		platforms = [ "x86_64-linux" ];
 		longDescription = ''
 			YANET is an open-source extensible framework for
 			software forwarding traffic based on DPDK.

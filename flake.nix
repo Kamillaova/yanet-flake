@@ -5,7 +5,6 @@
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 		flake-parts.url = "github:hercules-ci/flake-parts";
 		flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-		systems.url = "github:nix-systems/default-linux";
 		flake-compat.url = "github:nix-community/flake-compat";
 	};
 
@@ -15,7 +14,7 @@
 				flake-parts.flakeModules.easyOverlay
 			];
 		
-			systems = import inputs.systems;
+			systems = [ "x86_64-linux" ];
 
 			perSystem = { config, pkgs, ... }: {
 				overlayAttrs = {
