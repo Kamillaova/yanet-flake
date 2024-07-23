@@ -23,8 +23,8 @@
 , yanetConfig ? "release"
 , systemdSupport ? true
 }: let
-  version = "63.0";
-  commit = "535ec75b895faa76eceb6711e21795bd4fef4932";
+	version = "63.0";
+	commit = "535ec75b895faa76eceb6711e21795bd4fef4932";
 in stdenv.mkDerivation {
 	pname = "yanet";
 	inherit version;
@@ -77,7 +77,7 @@ in stdenv.mkDerivation {
 	passthru = { inherit dpdk; };
 
 	meta = with lib; {
-		description = "A high performance framework for forwarding traffic based on DPDK";
+		description = "High performance framework for forwarding traffic based on DPDK";
 		homepage = "https://github.com/yanet-platform/yanet";
 		license = with licenses; [ asl20 ];
 		platforms = [ "x86_64-linux" ];
