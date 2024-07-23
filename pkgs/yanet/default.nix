@@ -45,7 +45,8 @@ in stdenv.mkDerivation {
 		./0006-Add-cstdint-include.patch
 		./0007-Add-numa-dependency.patch
 		./0008-Minor-changes.patch
-	] ++ lib.optional (!systemdSupport) ./0009-Disable-systemd-support.patch;
+		./0009-Simplify-CPU-and-config-selection.patch
+	] ++ lib.optional (!systemdSupport) ./0010-Disable-systemd-support.patch;
 
 	enableParallelBuilding = true;
 

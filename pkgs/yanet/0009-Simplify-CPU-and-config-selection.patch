@@ -1,0 +1,158 @@
+diff -Naru a/controlplane/meson.build b/controlplane/meson.build
+--- a/controlplane/meson.build	2024-07-23 14:47:59
++++ b/controlplane/meson.build	2024-07-23 14:44:46
+@@ -31,22 +31,9 @@
+                 'telegraf.cpp',
+                 'tun64.cpp')
+ 
+-foreach arch : archs
+-    bin = 'yanet-controlplane'
+-    if archs.length() > 1
+-        bin += '-' + arch
+-    endif
+-
+-    cpp_args_append = ['-march=' + arch]
+-
+-    if yanet_configs.length() == 1
+-        cpp_args_append += '-DYANET_CONFIG_SUFFIX=' + yanet_config
+-    endif
+-
+-    executable(bin,
+-               sources,
+-               include_directories: yanet_rootdir,
+-               dependencies: dependencies,
+-               cpp_args: cpp_args_append,
+-               install: true)
+-endforeach
++executable('yanet-controlplane',
++           sources,
++           include_directories: yanet_rootdir,
++           dependencies: dependencies,
++           cpp_args: ['-DYANET_CONFIG_SUFFIX=' + yanet_config],
++           install: true)
+diff -Naru a/controlplane/unittest/meson.build b/controlplane/unittest/meson.build
+--- a/controlplane/unittest/meson.build	2024-07-23 14:47:59
++++ b/controlplane/unittest/meson.build	2024-07-23 14:46:01
+@@ -24,14 +24,10 @@
+                 'parser.cpp',
+                 'type.cpp')
+ 
+-arch = 'corei7'
+-cpp_args_append = ['-march=' + arch]
+-
+ unittest = executable('yanet-controlplane-unittest',
+                       [controlplane_sources, sources],
+                       include_directories: yanet_rootdir,
+-                      dependencies: dependencies,
+-                      cpp_args: cpp_args_append)
++                      dependencies: dependencies)
+ 
+ test('controlplane',
+      unittest,
+diff -Naru a/dataplane/meson.build b/dataplane/meson.build
+--- a/dataplane/meson.build	2024-07-23 14:47:59
++++ b/dataplane/meson.build	2024-07-23 14:59:22
+@@ -19,26 +19,10 @@
+                 'worker.cpp',
+                 'worker_gc.cpp')
+ 
+-foreach arch : archs
+-    foreach yanet_config : yanet_configs
+-        bin = 'yanet-dataplane'
+-        if archs.length() > 1
+-            bin += '-' + arch
+-        endif
+-        if yanet_configs.length() > 1
+-            bin += '-' + yanet_config
+-        endif
+-
+-        cpp_args_append = ['-march=' + arch,
+-                           '-DYANET_CONFIG_SUFFIX=' + yanet_config,
+-                           '-mlzcnt']
+-
+-        executable(bin,
+-                   sources,
+-                   include_directories: yanet_rootdir,
+-                   dependencies: dependencies,
+-                   cpp_args: cpp_args_append,
+-                   override_options: ['cpp_eh=none', 'cpp_rtti=false'],
+-                   install: true)
+-    endforeach
+-endforeach
++executable('yanet-dataplane',
++           sources,
++           include_directories: yanet_rootdir,
++           dependencies: dependencies,
++           cpp_args: ['-DYANET_CONFIG_SUFFIX=' + yanet_config, '-mlzcnt'],
++           override_options: ['cpp_eh=none', 'cpp_rtti=false'],
++           install: true)
+diff -Naru a/dataplane/unittest/meson.build b/dataplane/unittest/meson.build
+--- a/dataplane/unittest/meson.build	2024-07-23 14:47:59
++++ b/dataplane/unittest/meson.build	2024-07-23 14:45:49
+@@ -10,14 +10,10 @@
+                 'lpm.cpp',
+                 'hashtable.cpp')
+ 
+-arch = 'corei7'
+-cpp_args_append = ['-march=' + arch]
+-
+ unittest = executable('yanet-dataplane-unittest',
+                       sources,
+                       include_directories: yanet_rootdir,
+-                      dependencies: dependencies,
+-                      cpp_args: cpp_args_append)
++                      dependencies: dependencies)
+ 
+ test('dataplane',
+      unittest,
+diff -Naru a/meson.build b/meson.build
+--- a/meson.build	2024-07-23 14:47:59
++++ b/meson.build	2024-07-23 15:02:29
+@@ -5,6 +5,9 @@
+                           'warning_level=2',
+                           'werror=true'])
+ 
++if host_machine.cpu_family() != 'x86_64'
++    error('Only x86_64 is supported.')
++endif
+ 
+ yanet_rootdir = include_directories('.')
+ 
+@@ -32,20 +35,14 @@
+ endif
+ 
+ 
+-archs = ['corei7']
+-yanet_configs = ['release']
++yanet_config = ['release']
+ 
+ if get_option('target').contains('autotest')
+-    archs = ['corei7']
+-    yanet_configs = ['autotest']
++    yanet_config = ['autotest']
+ endif
+ 
+-if get_option('arch').length() > 0
+-    archs = get_option('arch')
+-endif
+-
+ if get_option('yanet_config').length() > 0
+-    yanet_configs = get_option('yanet_config')
++    yanet_config = get_option('yanet_config').get(0)
+ endif
+ 
+ 
+diff -Naru a/meson_options.txt b/meson_options.txt
+--- a/meson_options.txt	2024-07-23 14:47:59
++++ b/meson_options.txt	2024-07-23 14:44:01
+@@ -4,10 +4,6 @@
+        value: 'release',
+        description: 'Set the target build.')
+ 
+-option('arch',
+-       type: 'array',
+-       description: 'Set the target host arch.')
+-
+ option('yanet_config',
+        type: 'array',
+        description: 'Set the suffix for yanet configure file.')

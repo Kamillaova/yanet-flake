@@ -7,7 +7,7 @@
 , doxygen, python3, pciutils
 , withExamples ? []
 , shared ? true
-, machine ? "default"
+, machine ? if stdenv.isx86_64 then "corei7" else "generic"
 }: let
 	mod = kernel != null;
 	dpdkVersion = "22.11.2";
@@ -98,6 +98,10 @@ in stdenv.mkDerivation {
 	outputs = [ "out" "dev" "doc" ]
 		++ lib.optional mod "kmod"
 		++ lib.optional (withExamples != []) "examples";
+
+	passthru = {
+		inherit machine;
+	};
 
 	meta = with lib; {
 		description = "Set of libraries and drivers for fast packet processing";
